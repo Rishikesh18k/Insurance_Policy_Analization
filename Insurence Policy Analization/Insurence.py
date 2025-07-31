@@ -1,6 +1,6 @@
 from customtkinter import *
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import warnings
 win = CTk()
@@ -16,16 +16,19 @@ def get_value():
     age = file[["age"]]
     Eligibility = file["bought_insurance"]
     train_x,test_x,train_y,test_y=train_test_split(age,Eligibility)
-    model = LinearRegression()
+    model = LogisticRegression()
     model.fit(train_x,train_y)
     prediction_value = model.predict([[area_x]])
     score_price = model.score(test_x,test_y)
     score = (score_price*100)
+    if score < 0:
+       percentage_value.configure(text="0.00%",text_color="#F5F5FA",font=("Franklin Gothic Demi Cond",20))
+    else:
+        percentage_value.configure(text=f"{round(score,0)}0%",text_color="#F5F5FA",font=("Franklin Gothic Demi Cond",20))
     if int(prediction_value[0]) >= 1:
         status_value.configure(text="Will buy",text_color="#F5F5FA",font=("Franklin Gothic Demi Cond",18))
     else:
         status_value.configure(text="Will not buy",text_color="#F5F5FA",font=("Franklin Gothic Demi Cond",18))
-    percentage_value.configure(text=f"{round(score,)}.00%",text_color="#F5F5FA",font=("Franklin Gothic Demi Cond",20))
 def clear():
     entry_label.delete(0,END)
     status_value.configure(text="----------",font=("Franklin Gothic Demi Cond",22),text_color="#737373")
